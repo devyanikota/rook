@@ -111,6 +111,14 @@ func deleteFilesystem(context *clusterd.Context, fs cephv1.CephFilesystem) error
 		if err := client.RemoveFilesystem(context, fs.Namespace, fs.Name); err != nil {
 			return fmt.Errorf("failed to remove filesystem %s: %+v", fs.Name, err)
 		}
+
+		// Permanently remove the dataPools
+		if len(fs.Spec.MetadataPool) == 0 && len(fs.Spec.DataPools) == 0 {
+			if err := client.deleteFSPools(context, fs.Namespace, fs); err != nil {
+				return fmt.Errorf("failed to delete fs %s pools. %+v", fs.Name, err)
+			}
+			return nil
+		}
 	}
 
 	return mds.DeleteCluster(context, fs.Namespace, fs.Name)

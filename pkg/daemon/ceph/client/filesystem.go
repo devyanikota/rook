@@ -322,12 +322,6 @@ func RemoveFilesystem(context *clusterd.Context, clusterName, fsName string) err
 	if err != nil {
 		return fmt.Errorf("Failed to delete ceph fs %s. err=%+v", fsName, err)
 	}
-
-	err = deleteFSPools(context, clusterName, fs)
-	if err != nil {
-		return fmt.Errorf("failed to delete fs %s pools. %+v", fsName, err)
-	}
-	return nil
 }
 
 func deleteFSPools(context *clusterd.Context, clusterName string, fs *CephFilesystemDetails) error {
